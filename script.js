@@ -67,7 +67,7 @@ function editFilm(index) {
     document.querySelector('#releaseYear').value = film.releaseYear;
     document.querySelector('#isWatched').checked = film.isWatched;
 
-    document.querySelector('#submitBtn').textContent = "Обновить";
+    document.querySelector('#submitBtn').textContent = "Update";
     document.querySelector('#cancelBtn').style.display = "inline";
 
     editIndex = index;
@@ -75,9 +75,37 @@ function editFilm(index) {
 
 function resetForm() {
     document.querySelector('#film-form').reset();
-    document.querySelector('#submitBtn').textContent = "Добавить";
+    document.querySelector('#submitBtn').textContent = "Add";
     document.querySelector('#cancelBtn').style.display = "none";
     editIndex = null;
+}
+
+function createSortPart() {
+    const parentEl = document.createElement('div');
+    const select = document.createElement('select');
+    const yearOption = document.createElement('option');
+    const genreOption = document.createElement('option');
+    const nameOption = document.createElement('option');
+    const sortBtn = document.createElement('button');
+
+    yearOption.textContent = 'Year released';
+    yearOption.value = 'releaseYear';
+    genreOption.textContent = 'Genre';
+    genreOption.value = 'genre';
+    nameOption.textContent = 'title';
+    nameOption.value = 'title';
+    sortBtn.textContent = 'Sort';
+
+    parentEl.append(select, sortBtn);
+    parentEl.classList.add('film-sort');
+    select.append(yearOption, genreOption, nameOption);
+
+    document.body.insertBefore(parentEl, document.querySelector('#film-table'))
+
+    return [
+        select,
+        sortBtn
+    ]
 }
 
 function renderTable() {
@@ -94,8 +122,8 @@ function renderTable() {
             <td>${film.releaseYear}</td>
             <td>${film.isWatched ? 'Yes' : 'No'}</td>
             <td>
-                <button onclick="editFilm(${index})">Редактировать</button>
-                <button onclick="deleteFilm(${index})">Удалить</button>
+                <button onclick="editFilm(${index})">Edit</button>
+                <button onclick="deleteFilm(${index})">Delete</button>
             </td>
         `;
 
@@ -103,7 +131,30 @@ function renderTable() {
     })
 }
 
+const [selectEl, sortBtn] = createSortPart();
+
 document.querySelector('#film-form').addEventListener('submit', handleFormSubmit);
 document.querySelector('#cancelBtn').addEventListener('click', resetForm);
+sortBtn.addEventListener('click', () => {
+    const films = parseJSON('films');
+
+    films.sort((a, b) => {
+        let valA = a[selectEl.value];
+        let valB = b[selectEl.value];
+
+        if (selectEl.value === 'releaseYear') {
+            valA = Number(valA);
+            valB = Number(valB);
+        }
+
+        if (valA > valB) return 1;
+        if (valA < valB) return -1;
+        return 0;
+    });
+
+    stringify('films', films);
+
+    renderTable();
+});
 
 renderTable();

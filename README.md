@@ -47,7 +47,7 @@ You can **add, edit, delete, and sort movies** stored in the browser's **localSt
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/shineshinimo/film-manager-lh.git
+   git clone https://github.com/shineshinimo/film-manager-ls.git
    ```
 2. Open the project in **VS Code**.  
 3. Install and run the **Live Server extension** (or any local server).  
